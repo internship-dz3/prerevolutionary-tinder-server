@@ -1,0 +1,22 @@
+version: '3.2'
+
+volumes:
+  tinder-server:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:13.0
+    container_name: dz-3
+    volumes:
+      - type: volume
+        source: tinder-server
+        target: /var/lib/postgresql/dataConfig
+    environment:
+      POSTGRES_DB: tinder-server
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespass
+    ports:
+      - "5432:5432"
+
+# jdbc:postgresql://localhost:5432/tinder-server
