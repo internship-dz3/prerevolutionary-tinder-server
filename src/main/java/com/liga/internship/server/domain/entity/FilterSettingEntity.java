@@ -1,5 +1,6 @@
 package com.liga.internship.server.domain.entity;
 
+import com.liga.internship.server.domain.Gender;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,7 +28,8 @@ public class FilterSettingEntity {
     private Integer maxAge;
 
     @Column(name = "gender")
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @OneToOne(mappedBy = "filterSettingEntity")
     private UserEntity userEntity;

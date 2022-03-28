@@ -1,5 +1,6 @@
 package com.liga.internship.server.domain.entity;
 
+import com.liga.internship.server.domain.Gender;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -37,7 +38,8 @@ public class UserEntity {
     private FilterSettingEntity filterSettingEntity;
 
     @Column(name = "gender")
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @ManyToMany
     @JoinTable(
