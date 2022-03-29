@@ -1,4 +1,4 @@
-package com.liga.internship.server.config;
+package com.liga.internship.client.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,8 +14,6 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 @Configuration
 public class SwaggerConfiguration implements WebMvcConfigurer {
-    public static final String PATH = "/api";
-
     @Bean
     public Docket shopApi() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -35,7 +33,6 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
                 .license("Apache License Version 2.0")
                 .build();
     }
-
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

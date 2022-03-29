@@ -1,6 +1,6 @@
-package com.liga.internship.server.domain.entity;
+package com.liga.internship.client.server.domain.entity;
 
-import com.liga.internship.server.domain.Gender;
+import com.liga.internship.client.server.domain.Gender;
 import lombok.*;
 
 import javax.persistence.*;

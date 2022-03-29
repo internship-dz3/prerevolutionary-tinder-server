@@ -1,4 +1,4 @@
-package com.liga.internship.server;
+package com.liga.internship.client.server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

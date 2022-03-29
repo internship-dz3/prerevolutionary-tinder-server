@@ -1,8 +1,9 @@
-package com.liga.internship.server.controller;
+package com.liga.internship.client.server.controller;
 
-import com.liga.internship.server.domain.dto.UserTo;
-import com.liga.internship.server.domain.dto.UsersIdTo;
-import com.liga.internship.server.service.UserService;
+import com.liga.internship.client.server.common.MappingConstant;
+import com.liga.internship.client.server.domain.dto.UserTo;
+import com.liga.internship.client.server.domain.dto.UsersIdTo;
+import com.liga.internship.client.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-import static com.liga.internship.server.common.MappingConstant.USER;
-
 @RestController
-@RequestMapping(USER)
+@RequestMapping(MappingConstant.USER)
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;

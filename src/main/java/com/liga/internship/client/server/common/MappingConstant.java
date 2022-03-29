@@ -1,4 +1,4 @@
-package com.liga.internship.server.common;
+package com.liga.internship.client.server.common;
 
 public class MappingConstant {
     private MappingConstant() {

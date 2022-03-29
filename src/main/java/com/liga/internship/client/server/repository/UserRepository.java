@@ -1,6 +1,6 @@
-package com.liga.internship.server.repository;
+package com.liga.internship.client.server.repository;
 
-import com.liga.internship.server.domain.entity.UserEntity;
+import com.liga.internship.client.server.domain.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

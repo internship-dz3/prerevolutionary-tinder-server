@@ -1,6 +1,6 @@
-package com.liga.internship.server;
+package com.liga.internship.client.server;
 
-import com.liga.internship.server.config.SwaggerConfiguration;
+import com.liga.internship.client.server.config.SwaggerConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;

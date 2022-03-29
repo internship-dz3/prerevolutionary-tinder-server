@@ -1,4 +1,4 @@
-package com.liga.internship.server.domain.dto;
+package com.liga.internship.client.server.domain.dto;
 
 import lombok.*;
 

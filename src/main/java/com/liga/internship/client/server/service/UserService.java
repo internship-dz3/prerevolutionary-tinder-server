@@ -1,8 +1,8 @@
-package com.liga.internship.server.service;
+package com.liga.internship.client.server.service;
 
-import com.liga.internship.server.domain.dto.UserTo;
-import com.liga.internship.server.domain.entity.UserEntity;
-import com.liga.internship.server.repository.UserRepository;
+import com.liga.internship.client.server.domain.dto.UserTo;
+import com.liga.internship.client.server.domain.entity.UserEntity;
+import com.liga.internship.client.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
