@@ -1,5 +1,6 @@
 package com.liga.internship.server.controller;
 
+import com.liga.internship.server.common.MappingConstant;
 import com.liga.internship.server.domain.dto.UserTo;
 import com.liga.internship.server.domain.dto.UsersIdTo;
 import com.liga.internship.server.service.UserService;
@@ -11,10 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-import static com.liga.internship.server.common.MappingConstant.USER;
-
 @RestController
-@RequestMapping(USER)
+@RequestMapping(MappingConstant.USER)
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
