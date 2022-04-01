@@ -1,5 +1,6 @@
 package com.liga.internship.server.domain.entity;
 
+import com.liga.internship.server.domain.Gender;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -20,26 +21,27 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "telegram_id")
+    private Long telegramId;
+
     @Column(name = "username")
     private String username;
 
     @Column(name = "age")
     private Integer age;
 
-    @Column(name = "speciality")
-    private String speciality;
-
     @Column(name = "description")
     private String description;
 
-    @OneToOne
-    @JoinColumn(name = "params_id", referencedColumnName = "id")
-    private FilterSettingEntity filterSettingEntity;
+    @Column(name = "look")
+    @Enumerated(value = EnumType.STRING)
+    private Gender look;
 
     @Column(name = "gender")
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "favorite",
             joinColumns = {@JoinColumn(name = "user_id")},
@@ -47,7 +49,7 @@ public class UserEntity {
     )
     private Set<UserEntity> favorites = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "favorite",
             joinColumns = {@JoinColumn(name = "favorite_id")},
@@ -55,7 +57,7 @@ public class UserEntity {
     )
     private Set<UserEntity> admirers = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "dislike",
             joinColumns = {@JoinColumn(name = "user_id")},
@@ -63,7 +65,7 @@ public class UserEntity {
     )
     private Set<UserEntity> dislikes = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "dislike",
             joinColumns = {@JoinColumn(name = "disliked_user_id")},

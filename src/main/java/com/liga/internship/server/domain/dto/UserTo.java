@@ -1,5 +1,6 @@
 package com.liga.internship.server.domain.dto;
 
+import com.liga.internship.server.domain.Gender;
 import lombok.*;
 
 @AllArgsConstructor
@@ -9,8 +10,10 @@ import lombok.*;
 @Setter
 public class UserTo {
     private Long id;
+    private Long telegramId;
     private String username;
-    private Integer age;
+    private Integer age = 20;
     private String description;
-    private String gender;
+    private Gender gender;
+    private Gender look;
 }
