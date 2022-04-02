@@ -1,5 +1,6 @@
 package com.liga.internship.server.service;
 
+import com.liga.internship.server.domain.Gender;
 import com.liga.internship.server.domain.dto.UserTo;
 import com.liga.internship.server.domain.entity.UserEntity;
 import com.liga.internship.server.repository.UserRepository;
@@ -33,9 +34,10 @@ public class UserService {
         return false;
     }
 
-    public Optional<UserTo> findById(Long id) {
-        Optional<UserEntity> userEntityById = repository.findById(id);
-        return userEntityById.map(this::getUserToFromEntity);
+    public List<UserTo> findAll() {
+        return repository.findAll().stream()
+                .map(this::getUserToFromEntity)
+                .collect(Collectors.toList());
     }
 
     private UserTo getUserToFromEntity(UserEntity entity) {
@@ -50,18 +52,32 @@ public class UserService {
                 .build();
     }
 
+    public Optional<UserTo> findById(Long id) {
+        Optional<UserEntity> userEntityById = repository.findById(id);
+        return userEntityById.map(this::getUserToFromEntity);
+    }
+
     public Optional<UserTo> findByTelegramId(Long telegramId) {
         Optional<UserEntity> userEntityByTelegramId = repository.findUserEntityByTelegramId(telegramId);
         return userEntityByTelegramId.map(this::getUserToFromEntity);
 
     }
-
-    public List<UserTo> findNotRatedUsers(Long id) {
-        return findAll();
-    }
-
-    public List<UserTo> findAll() {
-        return repository.findAll().stream()
+    // Переделать на запрос в репозиторий
+    public List<UserTo> findNotRatedUsers(UserTo userTo) {
+        Gender look = userTo.getLook();
+        List<UserEntity> notRatedEntitiesByLook;
+        if (look == Gender.ALL) {
+            notRatedEntitiesByLook = repository.findAll();
+        } else {
+            notRatedEntitiesByLook = repository.findAllByGender(look);
+        }
+        UserEntity userEntity = repository.getById(userTo.getId());
+        Set<UserEntity> favorites = userEntity.getFavorites();
+        Set<UserEntity> dislikes = userEntity.getDislikes();
+        notRatedEntitiesByLook.remove(userEntity);
+        notRatedEntitiesByLook.removeAll(favorites);
+        notRatedEntitiesByLook.removeAll(dislikes);
+        return notRatedEntitiesByLook.stream()
                 .map(this::getUserToFromEntity)
                 .collect(Collectors.toList());
     }
@@ -71,7 +87,13 @@ public class UserService {
         Set<UserEntity> favorites = userEntity.getFavorites();
         Set<UserEntity> admirers = userEntity.getAdmirers();
         admirers.removeAll(favorites);
-        return getFavoriteList(favorites);
+        return getFavoriteList(admirers);
+    }
+
+    private List<UserTo> getFavoriteList(Set<UserEntity> favorites) {
+        return favorites.stream()
+                .map(this::getUserToFromEntity)
+                .collect(Collectors.toList());
     }
 
     public List<UserTo> getAdmirersList(Long id) {
@@ -94,12 +116,6 @@ public class UserService {
         Set<UserEntity> admirers = userEntity.getAdmirers();
         favorites.removeAll(admirers);
         return getFavoriteList(favorites);
-    }
-
-    private List<UserTo> getFavoriteList(Set<UserEntity> favorites) {
-        return favorites.stream()
-                .map(this::getUserToFromEntity)
-                .collect(Collectors.toList());
     }
 
     public List<UserTo> getHatersList(Long id) {
