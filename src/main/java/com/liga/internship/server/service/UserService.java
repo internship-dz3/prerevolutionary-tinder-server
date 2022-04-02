@@ -14,6 +14,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.liga.internship.server.domain.Gender.*;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -66,7 +68,7 @@ public class UserService {
     public List<UserTo> findNotRatedUsers(UserTo userTo) {
         Gender look = userTo.getLook();
         List<UserEntity> notRatedEntitiesByLook;
-        if (look == Gender.ALL) {
+        if (look == ALL) {
             notRatedEntitiesByLook = repository.findAll();
         } else {
             notRatedEntitiesByLook = repository.findAllByGender(look);
