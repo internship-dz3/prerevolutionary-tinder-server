@@ -56,9 +56,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getLoveList(id));
     }
 
-    @GetMapping("/list/{id}")
-    public ResponseEntity<List<UserTo>> getPageList(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.findNotRatedUsers(id));
+    @PostMapping("/list")
+    public ResponseEntity<List<UserTo>> votingList(@RequestBody UserTo profile) {
+        return ResponseEntity.ok(userService.findNotRatedUsers(profile));
     }
 
     @PostMapping("/like")
