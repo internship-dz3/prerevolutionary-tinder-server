@@ -9,7 +9,6 @@ import lombok.*;
 @Getter
 @Setter
 public class UserTo {
-    private Long id;
     private Long telegramId;
     private String username;
     private Integer age = 20;

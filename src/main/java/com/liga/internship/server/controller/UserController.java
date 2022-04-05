@@ -31,7 +31,7 @@ public class UserController {
 
     @GetMapping("/{id}/dislikes")
     public ResponseEntity<List<UserTo>> getAdmirersList(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getAdmirersList(id));
+        return ResponseEntity.ok(userService.getDislikes(id));
     }
 
     @GetMapping("/{id}")
@@ -56,9 +56,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getLoveList(id));
     }
 
-    @GetMapping("/list/{id}")
-    public ResponseEntity<List<UserTo>> getPageList(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.findNotRatedUsers(id));
+    @PostMapping("/list")
+    public ResponseEntity<List<UserTo>> votingList(@RequestBody UserTo profile) {
+        return ResponseEntity.ok(userService.findNotRatedUsers(profile));
     }
 
     @PostMapping("/like")

@@ -13,9 +13,9 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findUserEntityByTelegramId(Long id);
+    List<UserEntity> findAllByGender(Gender look);
 
-    Optional<UserEntity> findUserEntityByUsername(String username);
+    Optional<UserEntity> findUserEntityByTelegramId(Long telegramId);
 
     @Modifying
     @Query("update UserEntity u set u.username = :username, " +
@@ -23,14 +23,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
             "u.description = :description," +
             "u.gender = :gender," +
             "u.look = :look " +
-            "where u.id = :id")
-    int updateUser(@Param(value = "id") long id,
-                    @Param(value = "username") String username,
-                    @Param(value = "age") int age,
-                    @Param(value = "description") String description,
-                    @Param(value = "gender") Gender gender,
-                    @Param(value = "look") Gender look);
-
-    @Query("select u from UserEntity u where u.id = :id ")
-    List<UserEntity> findSomething(@Param(value = "id") long id);
+            "where u.telegramId = :telegram_id")
+    int updateUser(@Param(value = "telegram_id") long telegramId,
+                   @Param(value = "username") String username,
+                   @Param(value = "age") int age,
+                   @Param(value = "description") String description,
+                   @Param(value = "gender") Gender gender,
+                   @Param(value = "look") Gender look);
 }

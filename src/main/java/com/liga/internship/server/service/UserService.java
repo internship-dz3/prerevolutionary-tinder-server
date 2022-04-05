@@ -1,5 +1,6 @@
 package com.liga.internship.server.service;
 
+import com.liga.internship.server.domain.Gender;
 import com.liga.internship.server.domain.dto.UserTo;
 import com.liga.internship.server.domain.entity.UserEntity;
 import com.liga.internship.server.repository.UserRepository;
@@ -13,6 +14,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.liga.internship.server.domain.Gender.ALL;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -20,8 +23,8 @@ public class UserService {
 
     @Transactional
     public boolean dislikeAdmirer(Long currentUserId, Long admirer) {
-        Optional<UserEntity> current = repository.findById(currentUserId);
-        Optional<UserEntity> favorite = repository.findById(admirer);
+        Optional<UserEntity> current = repository.findUserEntityByTelegramId(currentUserId);
+        Optional<UserEntity> favorite = repository.findUserEntityByTelegramId(admirer);
         if (current.isPresent() && favorite.isPresent()) {
             UserEntity curEntity = current.get();
             UserEntity admEntity = favorite.get();
@@ -33,14 +36,14 @@ public class UserService {
         return false;
     }
 
-    public Optional<UserTo> findById(Long id) {
-        Optional<UserEntity> userEntityById = repository.findById(id);
-        return userEntityById.map(this::getUserToFromEntity);
+    public List<UserTo> findAll() {
+        return repository.findAll().stream()
+                .map(this::getUserToFromEntity)
+                .collect(Collectors.toList());
     }
 
     private UserTo getUserToFromEntity(UserEntity entity) {
         return UserTo.builder()
-                .id(entity.getId())
                 .telegramId(entity.getTelegramId())
                 .username(entity.getUsername())
                 .age(entity.getAge())
@@ -50,69 +53,100 @@ public class UserService {
                 .build();
     }
 
+    public Optional<UserTo> findById(Long id) {
+        Optional<UserEntity> userEntityById = repository.findUserEntityByTelegramId(id);
+        return userEntityById.map(this::getUserToFromEntity);
+    }
+
     public Optional<UserTo> findByTelegramId(Long telegramId) {
         Optional<UserEntity> userEntityByTelegramId = repository.findUserEntityByTelegramId(telegramId);
         return userEntityByTelegramId.map(this::getUserToFromEntity);
 
     }
 
-    public List<UserTo> findNotRatedUsers(Long id) {
-        return findAll();
-    }
+    // Переделать на запрос в репозиторий
+    public List<UserTo> findNotRatedUsers(UserTo userTo) {
+        Gender look = userTo.getLook();
+        List<UserEntity> notRatedEntitiesByLook;
+        if (look == ALL) {
+            notRatedEntitiesByLook = repository.findAll();
+        } else {
+            notRatedEntitiesByLook = repository.findAllByGender(look);
+        }
+        Optional<UserEntity> optionalUserEntity = repository.findUserEntityByTelegramId(userTo.getTelegramId());
+        if (optionalUserEntity.isPresent()) {
+            UserEntity userEntity = optionalUserEntity.get();
+            Set<UserEntity> favorites = userEntity.getFavorites();
+            Set<UserEntity> dislikes = userEntity.getDislikes();
+            notRatedEntitiesByLook.remove(userEntity);
+            notRatedEntitiesByLook.removeAll(favorites);
+            notRatedEntitiesByLook.removeAll(dislikes);
+        }
 
-    public List<UserTo> findAll() {
-        return repository.findAll().stream()
+        return notRatedEntitiesByLook.stream()
                 .map(this::getUserToFromEntity)
                 .collect(Collectors.toList());
     }
 
     public List<UserTo> getAdmirerList(Long id) {
-        UserEntity userEntity = repository.getById(id);
-        Set<UserEntity> favorites = userEntity.getFavorites();
-        Set<UserEntity> admirers = userEntity.getAdmirers();
-        admirers.removeAll(favorites);
-        return getFavoriteList(favorites);
-    }
-
-    public List<UserTo> getAdmirersList(Long id) {
-        UserEntity userEntity = repository.getById(id);
-        Set<UserEntity> admirers = userEntity.getAdmirers();
-        return getUserToList(admirers);
-    }
-
-    private List<UserTo> getUserToList(Set<UserEntity> userEntitySet) {
-        List<UserTo> userToList = new ArrayList<>();
-        for (UserEntity userEntity : userEntitySet) {
-            userToList.add(getUserToFromEntity(userEntity));
+        Optional<UserEntity> optionalUser = repository.findUserEntityByTelegramId(id);
+        if (optionalUser.isPresent()) {
+            UserEntity userEntity = optionalUser.get();
+            Set<UserEntity> favorites = userEntity.getFavorites();
+            Set<UserEntity> admirers = userEntity.getAdmirers();
+            admirers.removeAll(favorites);
+            return getUserToList(admirers);
         }
-        return userToList;
+        return new ArrayList<>();
     }
 
-    public List<UserTo> getFavoriteList(Long id) {
-        UserEntity userEntity = repository.getById(id);
-        Set<UserEntity> favorites = userEntity.getFavorites();
-        Set<UserEntity> admirers = userEntity.getAdmirers();
-        favorites.removeAll(admirers);
-        return getFavoriteList(favorites);
-    }
-
-    private List<UserTo> getFavoriteList(Set<UserEntity> favorites) {
+    private List<UserTo> getUserToList(Set<UserEntity> favorites) {
         return favorites.stream()
                 .map(this::getUserToFromEntity)
                 .collect(Collectors.toList());
     }
 
+    public List<UserTo> getDislikes(Long id) {
+        Optional<UserEntity> optionalUser = repository.findUserEntityByTelegramId(id);
+        if (optionalUser.isPresent()) {
+            UserEntity userEntity = optionalUser.get();
+            Set<UserEntity> dislikes = userEntity.getDislikes();
+            return getUserToList(dislikes);
+        }
+        return new ArrayList<>();
+    }
+
+    public List<UserTo> getFavoriteList(Long id) {
+        Optional<UserEntity> optionalUser = repository.findUserEntityByTelegramId(id);
+        if (optionalUser.isPresent()) {
+            UserEntity userEntity = optionalUser.get();
+            Set<UserEntity> favorites = userEntity.getFavorites();
+            Set<UserEntity> admirers = userEntity.getAdmirers();
+            favorites.removeAll(admirers);
+            return getUserToList(favorites);
+        }
+        return new ArrayList<>();
+    }
+
     public List<UserTo> getHatersList(Long id) {
-        UserEntity userEntity = repository.getById(id);
-        Set<UserEntity> haters = userEntity.getHaters();
-        return getUserToList(haters);
+        Optional<UserEntity> optionalUser = repository.findUserEntityByTelegramId(id);
+        if (optionalUser.isPresent()) {
+            UserEntity userEntity = optionalUser.get();
+            Set<UserEntity> haters = userEntity.getHaters();
+            return getUserToList(haters);
+        }
+        return new ArrayList<>();
     }
 
     public List<UserTo> getLoveList(Long id) {
-        UserEntity userEntity = repository.getById(id);
-        Set<UserEntity> favorites = userEntity.getFavorites();
-        Set<UserEntity> admirers = userEntity.getAdmirers();
-        return getLoveList(favorites, admirers);
+        Optional<UserEntity> optionalUser = repository.findUserEntityByTelegramId(id);
+        if (optionalUser.isPresent()) {
+            UserEntity userEntity = optionalUser.get();
+            Set<UserEntity> favorites = userEntity.getFavorites();
+            Set<UserEntity> admirers = userEntity.getAdmirers();
+            return getLoveList(favorites, admirers);
+        }
+        return new ArrayList<>();
     }
 
     private List<UserTo> getLoveList(Set<UserEntity> favorites, Set<UserEntity> admirers) {
@@ -124,8 +158,8 @@ public class UserService {
 
     @Transactional
     public boolean likeFavorite(Long currentUserId, Long favoriteUserId) {
-        Optional<UserEntity> current = repository.findById(currentUserId);
-        Optional<UserEntity> favorite = repository.findById(favoriteUserId);
+        Optional<UserEntity> current = repository.findUserEntityByTelegramId(currentUserId);
+        Optional<UserEntity> favorite = repository.findUserEntityByTelegramId(favoriteUserId);
         if (current.isPresent() && favorite.isPresent()) {
             UserEntity curEntity = current.get();
             UserEntity favEntity = favorite.get();
@@ -142,7 +176,8 @@ public class UserService {
         long telegramId = userTo.getTelegramId();
         Optional<UserEntity> userEntityByTelegramId = repository.findUserEntityByTelegramId(telegramId);
         if (userEntityByTelegramId.isPresent()) {
-            return Optional.empty();
+            update(userTo);
+            return Optional.of(userTo);
         } else {
             UserEntity userEntity = getUserEnityFromUserTo(userTo);
             UserEntity newUser = repository.save(userEntity);
@@ -152,7 +187,6 @@ public class UserService {
 
     private UserEntity getUserEnityFromUserTo(UserTo userTo) {
         return UserEntity.builder()
-                .id(userTo.getId())
                 .telegramId(userTo.getTelegramId())
                 .username(userTo.getUsername())
                 .age(userTo.getAge())
@@ -165,7 +199,7 @@ public class UserService {
     @Transactional
     public boolean update(UserTo userTo) {
         int i = repository.updateUser(
-                userTo.getId(),
+                userTo.getTelegramId(),
                 userTo.getUsername(),
                 userTo.getAge(),
                 userTo.getDescription(),
