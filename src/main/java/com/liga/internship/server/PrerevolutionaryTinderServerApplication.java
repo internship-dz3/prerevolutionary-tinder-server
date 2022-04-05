@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @Import(SwaggerConfiguration.class)
 public class PrerevolutionaryTinderServerApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(PrerevolutionaryTinderServerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(PrerevolutionaryTinderServerApplication.class, args);
+    }
 
 }

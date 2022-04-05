@@ -1,7 +1,7 @@
 version: '3.2'
 
 volumes:
-  tinder-server:
+  tinder_server:
     driver: local
 
 services:
@@ -10,10 +10,10 @@ services:
     container_name: dz-3
     volumes:
       - type: volume
-        source: tinder-server
+        source: tinder_server
         target: /var/lib/postgresql/dataConfig
     environment:
-      POSTGRES_DB: tinder-server
+      POSTGRES_DB: tinder_server
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgrespass
     ports:

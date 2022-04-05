@@ -31,7 +31,7 @@ public class UserController {
 
     @GetMapping("/{id}/dislikes")
     public ResponseEntity<List<UserTo>> getAdmirersList(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getAdmirersList(id));
+        return ResponseEntity.ok(userService.getDislikes(id));
     }
 
     @GetMapping("/{id}")

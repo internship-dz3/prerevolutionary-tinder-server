@@ -1,5 +1,5 @@
 ALTER
-    DATABASE "tinder-server" OWNER TO postgres;
+    DATABASE "tinder_server" OWNER TO postgres;
 
 SET
     statement_timeout = 0;
