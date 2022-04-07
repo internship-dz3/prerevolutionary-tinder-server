@@ -57,8 +57,8 @@ public class UserController {
     }
 
     @PostMapping("/list")
-    public ResponseEntity<List<UserTo>> votingList(@RequestBody UserTo profile) {
-        return ResponseEntity.ok(userService.findNotRatedUsers(profile));
+    public ResponseEntity<List<UserTo>> votingList(@RequestBody Long id) {
+        return ResponseEntity.ok(userService.findNotRatedUsers(id));
     }
 
     @PostMapping("/like")

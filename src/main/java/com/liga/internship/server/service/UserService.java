@@ -65,27 +65,27 @@ public class UserService {
     }
 
     // Переделать на запрос в репозиторий
-    public List<UserTo> findNotRatedUsers(UserTo userTo) {
-        Gender look = userTo.getLook();
-        List<UserEntity> notRatedEntitiesByLook;
-        if (look == ALL) {
-            notRatedEntitiesByLook = repository.findAll();
-        } else {
-            notRatedEntitiesByLook = repository.findAllByGender(look);
-        }
-        Optional<UserEntity> optionalUserEntity = repository.findUserEntityByTelegramId(userTo.getTelegramId());
+    public List<UserTo> findNotRatedUsers(Long id) {
+        Optional<UserEntity> optionalUserEntity = repository.findUserEntityByTelegramId(id);
         if (optionalUserEntity.isPresent()) {
             UserEntity userEntity = optionalUserEntity.get();
+            List<UserEntity> notRatedEntitiesByLook;
+            Gender look = userEntity.getLook();
+            if (look == ALL) {
+                notRatedEntitiesByLook = repository.findAll();
+            } else {
+                notRatedEntitiesByLook = repository.findAllByGender(look);
+            }
             Set<UserEntity> favorites = userEntity.getFavorites();
             Set<UserEntity> dislikes = userEntity.getDislikes();
             notRatedEntitiesByLook.remove(userEntity);
             notRatedEntitiesByLook.removeAll(favorites);
             notRatedEntitiesByLook.removeAll(dislikes);
+            return notRatedEntitiesByLook.stream()
+                    .map(this::getUserToFromEntity)
+                    .collect(Collectors.toList());
         }
-
-        return notRatedEntitiesByLook.stream()
-                .map(this::getUserToFromEntity)
-                .collect(Collectors.toList());
+        return new ArrayList<>();
     }
 
     public List<UserTo> getAdmirerList(Long id) {
