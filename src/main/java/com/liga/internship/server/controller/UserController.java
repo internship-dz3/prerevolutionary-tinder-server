@@ -101,6 +101,7 @@ public class UserController {
         return userService.getLoveList(id);
     }
 
+
     /**
      * Спиок для голосования
      *
@@ -110,6 +111,7 @@ public class UserController {
     @GetMapping("/{id}/tinder")
     public List<UserTo> getNotRatedList(@PathVariable Long id) {
         return userService.getNotRatedList(id);
+
     }
 
     /**
