@@ -27,9 +27,6 @@ public class UserEntity {
     @Column(name = "username")
     private String username;
 
-    @Column(name = "age")
-    private Integer age;
-
     @Column(name = "description")
     private String description;
 
