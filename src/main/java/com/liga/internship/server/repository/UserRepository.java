@@ -19,14 +19,12 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     @Modifying
     @Query("update UserEntity u set u.username = :username, " +
-            "u.age = :age," +
             "u.description = :description," +
             "u.gender = :gender," +
             "u.look = :look " +
             "where u.telegramId = :telegram_id")
     int updateUser(@Param(value = "telegram_id") long telegramId,
                    @Param(value = "username") String username,
-                   @Param(value = "age") int age,
                    @Param(value = "description") String description,
                    @Param(value = "gender") Gender gender,
                    @Param(value = "look") Gender look);
