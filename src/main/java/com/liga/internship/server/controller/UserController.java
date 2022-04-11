@@ -101,7 +101,6 @@ public class UserController {
         return userService.getLoveList(id);
     }
 
-
     /**
      * Спиок для голосования
      *
