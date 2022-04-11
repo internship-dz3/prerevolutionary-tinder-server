@@ -29,7 +29,10 @@ public class UserService {
      * @return true если оба пользователя присутствуют в базе
      */
     @Transactional
-    public boolean dislike(Long activeUserId, Long admirerUserId) {
+    public boolean dislike(long activeUserId, long admirerUserId) {
+        if (activeUserId == admirerUserId) {
+            return false;
+        }
         Optional<UserEntity> current = repository.findUserEntityByTelegramId(activeUserId);
         Optional<UserEntity> admirer = repository.findUserEntityByTelegramId(admirerUserId);
         if (current.isPresent() && admirer.isPresent()) {
@@ -49,12 +52,12 @@ public class UserService {
      * @param telegramId - телеграм id пользователя
      * @return опциональный UserTo
      */
-    public Optional<UserTo> findById(Long telegramId) {
+    public Optional<UserTo> findById(long telegramId) {
         Optional<UserEntity> userEntityById = repository.findUserEntityByTelegramId(telegramId);
         return userEntityById.map(this::getUserToFromEntity);
     }
 
-    public List<UserTo> getAdmirerList(Long activeUserId) {
+    public List<UserTo> getAdmirerList(long activeUserId) {
         Optional<UserEntity> optionalUser = repository.findUserEntityByTelegramId(activeUserId);
         if (optionalUser.isPresent()) {
             UserEntity userEntity = optionalUser.get();
@@ -72,7 +75,7 @@ public class UserService {
      * @param activeUserId - телеграм activeUserId пользователя
      * @return список не любицев
      */
-    public List<UserTo> getDislikeList(Long activeUserId) {
+    public List<UserTo> getDislikeList(long activeUserId) {
         Optional<UserEntity> optionalUser = repository.findUserEntityByTelegramId(activeUserId);
         if (optionalUser.isPresent()) {
             UserEntity userEntity = optionalUser.get();
@@ -88,7 +91,7 @@ public class UserService {
      * @param activeUserId - телеграм activeUserId пользователя
      * @return список любицев
      */
-    public List<UserTo> getFavoriteList(Long activeUserId) {
+    public List<UserTo> getFavoriteList(long activeUserId) {
         Optional<UserEntity> optionalUser = repository.findUserEntityByTelegramId(activeUserId);
         if (optionalUser.isPresent()) {
             UserEntity userEntity = optionalUser.get();
@@ -106,7 +109,7 @@ public class UserService {
      * @param activeUserId - телеграм activeUserId пользователя
      * @return список хейтеров
      */
-    public List<UserTo> getHatersList(Long activeUserId) {
+    public List<UserTo> getHatersList(long activeUserId) {
         Optional<UserEntity> optionalUser = repository.findUserEntityByTelegramId(activeUserId);
         if (optionalUser.isPresent()) {
             UserEntity userEntity = optionalUser.get();
@@ -122,7 +125,7 @@ public class UserService {
      * @param activeUserId - телеграм activeUserId пользователя
      * @return список взаимных любицев
      */
-    public List<UserTo> getLoveList(Long activeUserId) {
+    public List<UserTo> getLoveList(long activeUserId) {
         Optional<UserEntity> optionalUser = repository.findUserEntityByTelegramId(activeUserId);
         if (optionalUser.isPresent()) {
             UserEntity userEntity = optionalUser.get();
@@ -134,7 +137,7 @@ public class UserService {
     }
 
     // Переделать на запрос в репозиторий
-    public List<UserTo> getNotRatedList(Long activeUserId) {
+    public List<UserTo> getNotRatedList(long activeUserId) {
         Optional<UserEntity> optionalUserEntity = repository.findUserEntityByTelegramId(activeUserId);
         if (optionalUserEntity.isPresent()) {
             UserEntity userEntity = optionalUserEntity.get();
@@ -162,7 +165,10 @@ public class UserService {
      * @return true если оба пользователя присутствуют в базе
      */
     @Transactional
-    public boolean like(Long activeUserId, Long admirerUserId) {
+    public boolean like(long activeUserId, long admirerUserId) {
+        if (activeUserId == admirerUserId) {
+            return false;
+        }
         Optional<UserEntity> current = repository.findUserEntityByTelegramId(activeUserId);
         Optional<UserEntity> favorite = repository.findUserEntityByTelegramId(admirerUserId);
         if (current.isPresent() && favorite.isPresent()) {
