@@ -4,6 +4,7 @@ import com.liga.internship.server.domain.dto.UserTo;
 import com.liga.internship.server.domain.dto.UsersIdTo;
 import com.liga.internship.server.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import static com.liga.internship.server.common.MappingConstant.API_V_1_USER;
 /**
  * Рест контроллер тиндер сервиса
  */
+@Slf4j
 @RestController
 @RequestMapping(API_V_1_USER)
 @RequiredArgsConstructor
@@ -100,7 +102,6 @@ public class UserController {
     public List<UserTo> getLoveList(@PathVariable Long id) {
         return userService.getLoveList(id);
     }
-
 
     /**
      * Спиок для голосования
