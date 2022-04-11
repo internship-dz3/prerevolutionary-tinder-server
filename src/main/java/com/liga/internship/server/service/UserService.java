@@ -5,6 +5,7 @@ import com.liga.internship.server.domain.dto.UserTo;
 import com.liga.internship.server.domain.entity.UserEntity;
 import com.liga.internship.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import static com.liga.internship.server.domain.Gender.ALL;
 /**
  * Сервис для UserConroller
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -41,8 +43,10 @@ public class UserService {
             curEntity.getFavorites().remove(admEntity);
             curEntity.getDislikes().add(admEntity);
             repository.save(curEntity);
+            log.info("active userID {} dislike userID {}", activeUserId, admirerUserId);
             return true;
         }
+        log.info("active userID {} wrong dislike userID {}", activeUserId, admirerUserId);
         return false;
     }
 
@@ -53,6 +57,7 @@ public class UserService {
      * @return опциональный UserTo
      */
     public Optional<UserTo> findById(long telegramId) {
+        log.info("findById telegramID: {}", telegramId);
         Optional<UserEntity> userEntityById = repository.findUserEntityByTelegramId(telegramId);
         return userEntityById.map(this::getUserToFromEntity);
     }
@@ -80,6 +85,7 @@ public class UserService {
         if (optionalUser.isPresent()) {
             UserEntity userEntity = optionalUser.get();
             Set<UserEntity> dislikes = userEntity.getDislikes();
+            log.info("getDislikeList for userID {}, list size {}", activeUserId, dislikes.size());
             return getUserToList(dislikes);
         }
         return new ArrayList<>();
@@ -98,6 +104,7 @@ public class UserService {
             Set<UserEntity> favorites = userEntity.getFavorites();
             Set<UserEntity> admirers = userEntity.getAdmirers();
             favorites.removeAll(admirers);
+            log.info("getFavoriteList for userID {}, list size {}", activeUserId, favorites.size());
             return getUserToList(favorites);
         }
         return new ArrayList<>();
@@ -114,6 +121,7 @@ public class UserService {
         if (optionalUser.isPresent()) {
             UserEntity userEntity = optionalUser.get();
             Set<UserEntity> haters = userEntity.getHaters();
+            log.info("getHatersList for userID {}, list size {}", activeUserId, haters.size());
             return getUserToList(haters);
         }
         return new ArrayList<>();
@@ -131,7 +139,9 @@ public class UserService {
             UserEntity userEntity = optionalUser.get();
             Set<UserEntity> favorites = userEntity.getFavorites();
             Set<UserEntity> admirers = userEntity.getAdmirers();
-            return getLoveList(favorites, admirers);
+            List<UserTo> loveList = getLoveList(favorites, admirers);
+            log.info("getLoveList for userID {} size: {}", activeUserId, loveList.size());
+            return loveList;
         }
         return new ArrayList<>();
     }
@@ -149,6 +159,7 @@ public class UserService {
                 notRatedEntitiesByLook = repository.findAllByGender(look);
             }
             notRatedEntitiesByLook.remove(userEntity);
+            log.info("getNotRatedList for userID {} size: {}", activeUserId, notRatedEntitiesByLook.size());
             Collections.shuffle(notRatedEntitiesByLook);
             return notRatedEntitiesByLook.stream()
                     .map(this::getUserToFromEntity)
@@ -177,8 +188,10 @@ public class UserService {
             curEntity.getDislikes().remove(favEntity);
             curEntity.getFavorites().add(favEntity);
             repository.save(curEntity);
+            log.info("active userID {} like userID {}", activeUserId, admirerUserId);
             return curEntity.getAdmirers().contains(favEntity);
         }
+        log.info("active userID {} wrong like userID {}", activeUserId, admirerUserId);
         return false;
     }
 
@@ -198,6 +211,7 @@ public class UserService {
         } else {
             UserEntity userEntity = getUserEnityFromUserTo(userTo);
             UserEntity newUser = repository.save(userEntity);
+            log.info("register new user: {}", userTo);
             return Optional.of(getUserToFromEntity(newUser));
         }
     }
@@ -217,6 +231,7 @@ public class UserService {
                 userTo.getGender(),
                 userTo.getLook()
         );
+        log.info("update user: {}", userTo);
         return numberOfUpdatedUsers == 1;
     }
 
